@@ -614,6 +614,33 @@ function getDatasetsMeta(region) {
     };
 };
 
+
+/**
+ * Populate UI.
+ */
+function populateUI(datasets) {
+    // Populate dataset selector.
+    datasets.forEach(function(dataset) {
+        if (dataset.data !== null) {
+            var option = document.createElement("option");
+            option.value = dataset.name;
+            option.innerHTML = dataset.name;
+            datasetsSelection.appendChild(option);
+        };
+    });
+
+    // Add event listener to data selector.
+    datasetsSelection.addEventListener("change", function() {
+        for (var i = 0; i < datasets.length; i++) {
+            if (datasets[i].name === this.value) {
+                updateChart(datasets[i]);
+                break;
+            };
+        };
+    });
+};
+
+
 /**
  * Main
  */
