@@ -619,6 +619,9 @@ function getDatasetsMeta(region) {
  * Populate UI.
  */
 function populateUI(datasets) {
+    // Delete existing options.
+    datasetsSelection.innerHTML = "";
+
     // Populate dataset selector.
     datasets.forEach(function(dataset) {
         if (dataset.data !== null) {
@@ -626,6 +629,9 @@ function populateUI(datasets) {
             option.value = dataset.name;
             option.innerHTML = dataset.name;
             datasetsSelection.appendChild(option);
+            if (dataset.name === "Postings Category Trend") {
+                populateIndustryForm(dataset.data);
+            };
         };
     });
 
@@ -633,12 +639,53 @@ function populateUI(datasets) {
     datasetsSelection.addEventListener("change", function() {
         for (var i = 0; i < datasets.length; i++) {
             if (datasets[i].name === this.value) {
-                updateChart(datasets[i]);
+                if (datasets[i].name === "Postings Category Trend") {
+                    state = {
+                        dataset: datasets[i],
+                        category: "Accounting"
+                    }
+                    updateApp(state);
+                } else {
+                    state = {
+                        dataset: datasets[i],
+                        category: null
+                    }
+                    updateApp(state);
+                }
                 break;
             };
         };
     });
 };
+
+
+function populateIndustryForm(data) {
+    // Populate dataset selector.
+    var categoriesSet = new Set(data.map(function(d) {
+        return d.category 
+    }));
+
+    var rtn;
+
+    Array(...categoriesSet).sort().forEach(function(category, i) {
+        if (i === 0) { rtn = i }
+        var option = document.createElement("option");
+        option.value = category;
+        option.innerHTML = category;
+        industrySelection.appendChild(option);
+    });
+
+    // Add event listener to data selector.
+    industrySelection.addEventListener("change", function() {
+        state = {
+            ...state,
+            category: this.value
+        }
+        updateApp(state);
+    });
+
+    return rtn;
+}
 
 
 /**
