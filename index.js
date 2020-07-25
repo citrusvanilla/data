@@ -618,7 +618,7 @@ function getDatasetsMeta(region) {
 /**
  * Populate UI.
  */
-function populateUI(datasets) {
+function populateUI(datasets, chartName) {
     // Delete existing options.
     datasetsSelection.innerHTML = "";
 
@@ -656,6 +656,9 @@ function populateUI(datasets) {
             };
         };
     });
+
+    // Hide datasetsSelection if chartName is passed in hash.
+    selectionsContainer.style.display = chartName ? "none" : "block";
 };
 
 
