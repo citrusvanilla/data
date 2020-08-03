@@ -632,36 +632,55 @@ function populateUI(datasets, chartName) {
             if (dataset.name === "Postings Category Trend") {
                 populateIndustryForm(dataset.data);
             };
-        };
-    });
-
-    // Add event listener to data selector.
-    datasetsSelection.addEventListener("change", function() {
-        for (var i = 0; i < datasets.length; i++) {
-            if (datasets[i].name === this.value) {
-                if (datasets[i].name === "Postings Category Trend") {
-                    state = {
-                        dataset: datasets[i],
-                        category: "Accounting"
-                    }
-                    updateApp(state);
-                } else {
-                    state = {
-                        dataset: datasets[i],
-                        category: null
-                    }
-                    updateApp(state);
-                }
-                break;
+            if (dataset.name === "postingstrendbymetro") {
+                populateMetrosForm(dataset.data, metrosSelection);
             };
         };
     });
 
+    // Add event listener to data selector.
+    // datasetsSelection.addEventListener("change", function() {
+    //     for (var i = 0; i < datasets.length; i++) {
+    //         if (datasets[i].name === this.value) {
+    //             if (datasets[i].name === "Postings Category Trend") {
+    //                 state = {
+    //                     dataset: datasets[i],
+    //                     category: "Accounting"
+    //                 }
+    //                 updateApp(state);
+    //             } else {
+    //                 state = {
+    //                     dataset: datasets[i],
+    //                     category: null
+    //                 }
+    //                 updateApp(state);
+    //             }
+    //             break;
+    //         };
+    //     };
+    // });
+
     // Hide datasetsSelection if chartName is passed in hash.
-    selectionsContainer.style.display = chartName ? "none" : "block";
+    switch (chartName) {
+        case undefined:
+            selectionsContainer.style.display = "none";
+            break;
+        case "postingstrend":
+            selectionsContainer.style.display = "none";
+            break;
+        case "postingstrendbymetro":
+            selectionsContainer.style.display = "flex";
+            industryForm.style.display = "none";
+            metrosForm.style.display = "block";
+            datasetsForm.style.display = "none";
+            break;
+    }
 };
 
-
+/**
+ * 
+ * @param {*} data 
+ */
 function populateIndustryForm(data) {
     // Populate dataset selector.
     var categoriesSet = new Set(data.map(function(d) {
@@ -683,6 +702,40 @@ function populateIndustryForm(data) {
         state = {
             ...state,
             category: this.value
+        }
+        updateApp(state);
+    });
+
+    return rtn;
+}
+
+/**
+ * Populate dataset selector.
+ * @param {*} data 
+ */
+function populateMetrosForm(data, form) {
+    // Get all unique metros into a set of strings.
+    var metrosSet = new Set(data.map(function(d) {
+        return d['CBSA_Title'] 
+    })); 
+
+    var rtn;
+
+    Array(...metrosSet).sort().forEach(function(metro, i) {
+        if (i === 0) { rtn = i }
+        var option = document.createElement("option");
+        option.value = metro;
+        option.innerHTML = metro;
+        option.selected = metro === "Austin-Round Rock, TX";
+        form.appendChild(option);
+    });
+
+    // Add event listener to data selector.
+    form.addEventListener("change", function() {
+        state = {
+            ...state,
+            category: null,
+            metro: this.value
         }
         updateApp(state);
     });
