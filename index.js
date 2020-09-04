@@ -678,36 +678,16 @@ function populateUI(datasets, chartName) {
 };
 
 /**
- * 
- * @param {*} data 
+ * STATE CHART
  */
-function populateIndustryForm(data) {
-    // Populate dataset selector.
-    var categoriesSet = new Set(data.map(function(d) {
-        return d.category 
-    }));
+function initChart() {
 
-    var rtn;
-
-    Array(...categoriesSet).sort().forEach(function(category, i) {
-        if (i === 0) { rtn = i }
-        var option = document.createElement("option");
-        option.value = category;
-        option.innerHTML = category;
-        industrySelection.appendChild(option);
-    });
-
-    // Add event listener to data selector.
-    industrySelection.addEventListener("change", function() {
-        state = {
-            ...state,
-            category: this.value
-        }
-        updateApp(state);
-    });
-
-    return rtn;
-}
+    // Extend chart.
+    Chart.defaults.LineWithLine = Chart.defaults.line;
+    Chart.defaults.global.animation.duration = 0;
+    Chart.controllers.LineWithLine = Chart.controllers.line.extend({
+        draw: function(ease) {
+            Chart.controllers.line.prototype.draw.call(this, ease);
 
 /**
  * Populate dataset selector.
@@ -719,23 +699,42 @@ function populateMetrosForm(data, form) {
         return d['CBSA_Title'] 
     })); 
 
-    var rtn;
+                const lookupDate = new Date(chartX);
+                const y2019 = this.chart.data.datasets
+                    .find(d => d.label === "2019").data
+                    .find(p => p.x.getTime() === lookupDate.getTime())
+                    .y;
+                const y2020 = this.chart.data.datasets
+                    .find(d => d.label === "2020").data
+                    .find(p => p.x.getTime() === lookupDate.getTime())
+                    .y;
 
-    Array(...metrosSet).sort().forEach(function(metro, i) {
-        if (i === 0) { rtn = i }
-        var option = document.createElement("option");
-        option.value = metro;
-        option.innerHTML = metro;
-        option.selected = metro === "Austin-Round Rock, TX";
-        form.appendChild(option);
-    });
+                var topYpixel = this.chart.scales['y-axis-0'].top;
+                var bottomYpixel = this.chart.scales['y-axis-0'].bottom;
+                const minYValue = this.chart.scales['y-axis-0'].min;
+                const maxYValue = this.chart.scales['y-axis-0'].max;
 
-    // Add event listener to data selector.
-    form.addEventListener("change", function() {
-        state = {
-            ...state,
-            category: null,
-            metro: this.value
+                const y0 = topYpixel + (
+                    (maxYValue - y2019)
+                    / (maxYValue - minYValue)
+                    * (bottomYpixel - topYpixel)
+                );
+                const y1 = topYpixel + (
+                    (maxYValue- y2020)
+                    / (maxYValue - minYValue)
+                    * (bottomYpixel - topYpixel)
+                );
+    
+                // draw line
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, y0);
+                ctx.lineTo(x, y1);
+                ctx.lineWidth = 2.0;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+                ctx.restore();
+            }
         }
         updateApp(state);
     });

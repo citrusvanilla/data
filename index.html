@@ -127,6 +127,7 @@
             z-index: 2000;
         }
 
+<<<<<<< HEAD
         #loader {
             position: absolute;
             left: 50%;
@@ -172,9 +173,20 @@
 }
     </style>
 </head>
+=======
+        .bootstrap-tagsinput {
+            width: 600px;
+            line-height: 35px;
+            text-align: left;
+            border-radius: 10px;
+        }
+>>>>>>> update: multiselect for metros
 
-<body>
+        .tag {
+            font-size: 100% !important;
+        }
 
+<<<<<<< HEAD
     
     <!-- Navigation -->
     <div>
@@ -194,6 +206,20 @@
                 <a href="#home" region="metro" aria-controls="home" role="tab" data-toggle="tab">US Metros</a>
             </li>
         </ul>
+=======
+        .postingsTrendByMetro {
+            display: none;
+        };
+
+        .postingsTrendByState {
+            display: none;
+        };
+
+    </style>
+</head>
+
+<body>
+>>>>>>> update: multiselect for metros
 
         <!-- Tab panes -->
         <div class="tab-content">
@@ -242,7 +268,33 @@
       
     </div>
 
+<<<<<<< HEAD
 
+=======
+    <!-- Selections -->
+    <div id="selections-container" style="margin: 15px 0px;">
+
+        <!-- State selection -->
+        <form id="states-form" class="form postingsTrendByState">
+            <label for="states">Choose a State:</label>
+            <select name="states" id="states"></select>
+        </form>
+
+        <!--Bootstrap Tags Input w/ Typeahead-->
+        <div id='search-container' class="postingsTrendByMetro">
+            <input
+                class="tagsinput-typeahead"
+                type="text"
+            />
+        </div>
+
+    </div>
+
+    <!-- Chart contiainer -->
+    <div class="chart-container" style="position: relative; max-width:640px">
+        <canvas id="myChart"></canvas>
+    </div>
+>>>>>>> update: multiselect for metros
 
     <!-- Footer -->
     <div id="footer">
