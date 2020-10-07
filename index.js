@@ -320,21 +320,21 @@ function updateAppNational(data, metros, chart) {
     if (metros.length) {
         chartDatesP1.innerHTML = (
             "7 day moving avg through "
-            + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
+            + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x))
         ).split(" ").join("&nbsp;") + ", ";
         chartDatesP2.innerHTML = (
             "indexed to "
-            + shortDate(new Date(data[metros[0]][0].x))
+            + shortDate(new Date(data[countries[0]][0].x))
         ).split(" ").join("&nbsp;");    
     };
 
     // Swap old with new datasets.
     chart.data.labels.pop();
     while (chart.data.datasets.length) { chart.data.datasets.pop() };
-    for (var i = 0; i < metros.length; i++) {
+    for (var i = 0; i < countries.length; i++) {
         chart.data.datasets.push({
-            label: metros[i],
-            data: data[metros[i]],
+            label: countries[i],
+            data: data[countries[i]],
             fill: false,
             borderColor: settings["availableColors"][i][0],
             borderWidth: 3.0,
@@ -361,6 +361,9 @@ function initializeTabNational(processedData) {
     chartDatesP1.innerHTML = "";
 
     // Style.
+    chartTitle.innerText = "Job Postings on Indeed by Country";
+    chartDatesP1.innerHTML = "";
+
     $(".postingsTrendByMetro").css('display','block');
     selectionsContainer.style.display = "none";
     selectionsPrompt.style.display = "none";
@@ -376,6 +379,15 @@ function initializeTabNational(processedData) {
     };
 
     // Sets the options for the typeahead input.
+    if (document.querySelector(".bootstrap-tagsinput")) {
+        document.querySelector(".tagsinput-typeahead").remove();
+        document.querySelector(".bootstrap-tagsinput").remove();
+        var tagsTA = document.createElement("input");
+        tagsTA.classList.add("tagsinput-typeahead");
+        tagsTA.setAttribute("type", "text");
+        document.querySelector("#search-container").appendChild(tagsTA);
+    };
+
     $('.tagsinput-typeahead').tagsinput({
         typeahead: {
             source: Object.keys(processedData),
@@ -741,7 +753,6 @@ function populateMetrosForm(data, form) {
 
     return rtn;
 }
-
 
 /**
  * Main
