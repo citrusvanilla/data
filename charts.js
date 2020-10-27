@@ -495,10 +495,11 @@ function initChartNational() {
             scales: {
                 yAxes: [{
                     ticks: {
+                        padding: 5,
                         beginAtZero: false,
                         autoSkip: false,
                         callback: function(value, index, values) {
-                            return value                          
+                            return value.toString() + "%";
                         }
                     },
                     gridLines: {
@@ -507,6 +508,8 @@ function initChartNational() {
                 }],
                 xAxes: [{
                     ticks: {
+                        padding: 10,
+                        fontStyle: "bold",
                         beginAtZero: false,
                         autoSkip: false,
                         maxTicksLimit: 1000,
@@ -521,6 +524,7 @@ function initChartNational() {
                         stepSize: 1
                     },
                     gridLines: {
+                        zeroLineColor: 'rgba(0, 0, 0, 0.1)',
                         display: true,
                         callback: function(value, index, values) {
                             return ["1", "15"].includes(value.split(" ")[1])
