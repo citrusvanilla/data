@@ -9,6 +9,8 @@
     <meta name="author" content="Justin Fung">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -23,6 +25,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
     <style>
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+            font-weight: bold;
+        }
+        a {
+            color: #337ab7;
+        }
+
         #attribution-container {
             align-items: center;
             display: flex;
@@ -31,8 +40,9 @@
         }
 
         body {
-            font-family: "Helvetica Neue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+            font-family: 'Noto Sans', sans-serif;
             max-width: 640px;
+            color: #2D2D2D;
         }
 
         body > div {
@@ -65,6 +75,10 @@
             justify-content: space-around;
         }
 
+        #selections-prompt {
+            font-size: 13px;
+        }
+
         #source {
             font-size: 0.7em;
         }
@@ -81,17 +95,19 @@
 
         #chart-dates {
             font-weight: 600;
+            font-size: 1.125em;
         }
 
         #chart-title {
             font-size: 1.5em;
-            font-weight: 300;
+            font-weight: bold;
         }
 
         .bootstrap-tagsinput {
             line-height: 35px;
             text-align: left;
             border-radius: 10px;
+            width: 100%;
         }
 
         .tag {
@@ -102,12 +118,9 @@
             display: none;
         }
 
-        .postingsTrendByState {
-            display: none;
-        }
-
         #cover {
             height: 100%;
+            max-width: 640px;
             width: 100%;
             position: absolute;
             background-color: #fff;
@@ -124,12 +137,28 @@
             margin: -75px 0 0 -75px;
             border: 16px solid #f3f3f3;
             border-radius: 50%;
-            border-top: 16px solid #3498db;
+            border-top: 16px solid #2557A7;
             width: 120px;
             height: 120px;
             -webkit-animation: spin 2s linear infinite;
             animation: spin 2s linear infinite;
             z-index: 20001;
+        }
+
+        #search-container {
+            width: 90%;
+        }
+
+        .nav>li>a {
+            padding: 10px 10px !important;
+        }
+
+        .chart-container {
+            padding: 0px 5px;
+        }
+
+        #footer {
+            padding: 0px 5px;
         }
 
         @-webkit-keyframes spin {
@@ -145,47 +174,75 @@
 </head>
 
 <body>
-    <!--Loader-->
-    <div id="cover">
-        <div id="loader"></div>
-    </div>
+
     
+    <!-- Navigation -->
+    <div>
 
-    <!-- Title -->
-    <div id="title-container">
-        <div id="chart-title">
-            <span id="chart-title-dataset"></span>
-            <span id="chart-title-locale"></span>
+        <!-- Nav tabs -->
+        <ul id="myTabs"class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#home" region="country" aria-controls="home" role="tab" data-toggle="tab">Countries</a>
+            </li>
+            <li role="presentation">
+                <a href="#home" region="national" aria-controls="home" role="tab" data-toggle="tab">US Wage Tiers</a>
+            </li>
+            <li role="presentation">
+                <a href="#home" region="state" aria-controls="home" role="tab" data-toggle="tab">US States</a>
+            </li>
+            <li role="presentation">
+                <a href="#home" region="metro" aria-controls="home" role="tab" data-toggle="tab">US Metros</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home" style>
+                <!--Loader-->
+                <div id="cover">
+                    <div id="loader"></div>
+                </div>
+
+                <!-- Title -->
+                <div id="title-container">
+                    <div id="chart-title">
+                        <span id="chart-title-dataset"></span>
+                        <span id="chart-title-locale"></span>
+                    </div>
+                    <div id="chart-dates">
+                        <span id="chart-dates-p1"></span>
+                        <span id="chart-dates-p2"></span>
+                    </div>
+                </div>
+
+                <!-- Selections -->
+                <i id="selections-prompt" style="margin-left: 5%;">
+                    Search for locations in the box below:
+                </i>
+                <div id="selections-container" style="margin: 5px 0px 15px 0px;">
+
+                    <!--Bootstrap Tags Input w/ Typeahead-->
+                    <div id='search-container' class="postingsTrendByMetro">
+                        <input class="tagsinput-typeahead" type="text" />
+                    </div>
+
+                </div>
+
+                <!-- Chart contiainer -->
+                <div class="chart-container" style="position: relative; max-width:640px">
+                    <canvas id="myChart"></canvas>
+                </div>
+
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="profile">profile</div>
+            <div role="tabpanel" class="tab-pane" id="messages">messages</div>
+            <div role="tabpanel" class="tab-pane" id="settings">settings</div>
         </div>
-        <div id="chart-dates">
-            <span id="chart-dates-p1"></span>
-            <span id="chart-dates-p2"></span>
-        </div>
+      
     </div>
 
-    <!-- Selections -->
-    <div id="selections-container" style="margin: 15px 0px;">
 
-        <!-- State selection -->
-        <form id="states-form" class="form postingsTrendByState">
-            <label for="states">Choose a State:</label>
-            <select name="states" id="states"></select>
-        </form>
-
-        <!--Bootstrap Tags Input w/ Typeahead-->
-        <div id='search-container' class="postingsTrendByMetro">
-            <input
-                class="tagsinput-typeahead"
-                type="text"
-            />
-        </div>
-
-    </div>
-
-    <!-- Chart contiainer -->
-    <div class="chart-container" style="position: relative; max-width:640px">
-        <canvas id="myChart"></canvas>
-    </div>
 
     <!-- Footer -->
     <div id="footer">
@@ -200,6 +257,8 @@
         </div>
     </div>
 
+    <script src="charts.js"></script>
     <script src="index.js"></script>
+
 </body>
 </html>
