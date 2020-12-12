@@ -224,7 +224,7 @@ function initializeTabMetro(processedData) {
 function updateAppState(data, states, chart) {
 
     var statesAbvs = states.map(s => stateNameMap[s]);
-    console.log(data)
+
     // Update dates.
     if (states.length) {
         chartDatesP1.innerHTML = (
