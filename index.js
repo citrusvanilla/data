@@ -320,21 +320,21 @@ function updateAppNational(data, metros, chart) {
     if (metros.length) {
         chartDatesP1.innerHTML = (
             "7 day moving avg through "
-            + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x))
+            + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
         ).split(" ").join("&nbsp;") + ", ";
         chartDatesP2.innerHTML = (
             "indexed to "
-            + shortDate(new Date(data[countries[0]][0].x))
+            + shortDate(new Date(data[metros[0]][0].x))
         ).split(" ").join("&nbsp;");    
     };
 
     // Swap old with new datasets.
     chart.data.labels.pop();
     while (chart.data.datasets.length) { chart.data.datasets.pop() };
-    for (var i = 0; i < countries.length; i++) {
+    for (var i = 0; i < metros.length; i++) {
         chart.data.datasets.push({
-            label: countries[i],
-            data: data[countries[i]],
+            label: metros[i],
+            data: data[metros[i]],
             fill: false,
             borderColor: settings["availableColors"][i][0],
             borderWidth: 3.0,
@@ -361,9 +361,6 @@ function initializeTabNational(processedData) {
     chartDatesP1.innerHTML = "";
 
     // Style.
-    chartTitle.innerText = "Job Postings on Indeed by Country";
-    chartDatesP1.innerHTML = "";
-
     $(".postingsTrendByMetro").css('display','block');
     selectionsContainer.style.display = "none";
     selectionsPrompt.style.display = "none";
@@ -379,15 +376,6 @@ function initializeTabNational(processedData) {
     };
 
     // Sets the options for the typeahead input.
-    if (document.querySelector(".bootstrap-tagsinput")) {
-        document.querySelector(".tagsinput-typeahead").remove();
-        document.querySelector(".bootstrap-tagsinput").remove();
-        var tagsTA = document.createElement("input");
-        tagsTA.classList.add("tagsinput-typeahead");
-        tagsTA.setAttribute("type", "text");
-        document.querySelector("#search-container").appendChild(tagsTA);
-    };
-
     $('.tagsinput-typeahead').tagsinput({
         typeahead: {
             source: Object.keys(processedData),
@@ -625,134 +613,6 @@ function getDatasetsMeta(region) {
             break;
     };
 };
-
-
-/**
- * Populate UI.
- */
-function populateUI(datasets, chartName) {
-    // Delete existing options.
-    datasetsSelection.innerHTML = "";
-
-    // Populate dataset selector.
-    datasets.forEach(function(dataset) {
-        if (dataset.data !== null) {
-            var option = document.createElement("option");
-            option.value = dataset.name;
-            option.innerHTML = dataset.name;
-            datasetsSelection.appendChild(option);
-            if (dataset.name === "Postings Category Trend") {
-                populateIndustryForm(dataset.data);
-            };
-            if (dataset.name === "postingstrendbymetro") {
-                populateMetrosForm(dataset.data, metrosSelection);
-            };
-        };
-    });
-
-    // Add event listener to data selector.
-    // datasetsSelection.addEventListener("change", function() {
-    //     for (var i = 0; i < datasets.length; i++) {
-    //         if (datasets[i].name === this.value) {
-    //             if (datasets[i].name === "Postings Category Trend") {
-    //                 state = {
-    //                     dataset: datasets[i],
-    //                     category: "Accounting"
-    //                 }
-    //                 updateApp(state);
-    //             } else {
-    //                 state = {
-    //                     dataset: datasets[i],
-    //                     category: null
-    //                 }
-    //                 updateApp(state);
-    //             }
-    //             break;
-    //         };
-    //     };
-    // });
-
-    // Hide datasetsSelection if chartName is passed in hash.
-    switch (chartName) {
-        case undefined:
-            selectionsContainer.style.display = "none";
-            break;
-        case "postingstrend":
-            selectionsContainer.style.display = "none";
-            break;
-        case "postingstrendbymetro":
-            selectionsContainer.style.display = "flex";
-            industryForm.style.display = "none";
-            metrosForm.style.display = "block";
-            datasetsForm.style.display = "none";
-            break;
-    }
-};
-
-/**
- * STATE CHART
- */
-function initChart() {
-
-    // Extend chart.
-    Chart.defaults.LineWithLine = Chart.defaults.line;
-    Chart.defaults.global.animation.duration = 0;
-    Chart.controllers.LineWithLine = Chart.controllers.line.extend({
-        draw: function(ease) {
-            Chart.controllers.line.prototype.draw.call(this, ease);
-
-/**
- * Populate dataset selector.
- * @param {*} data 
- */
-function populateMetrosForm(data, form) {
-    // Get all unique metros into a set of strings.
-    var metrosSet = new Set(data.map(function(d) {
-        return d['CBSA_Title'] 
-    })); 
-
-                const lookupDate = new Date(chartX);
-                const y2019 = this.chart.data.datasets
-                    .find(d => d.label === "2019").data
-                    .find(p => p.x.getTime() === lookupDate.getTime())
-                    .y;
-                const y2020 = this.chart.data.datasets
-                    .find(d => d.label === "2020").data
-                    .find(p => p.x.getTime() === lookupDate.getTime())
-                    .y;
-
-                var topYpixel = this.chart.scales['y-axis-0'].top;
-                var bottomYpixel = this.chart.scales['y-axis-0'].bottom;
-                const minYValue = this.chart.scales['y-axis-0'].min;
-                const maxYValue = this.chart.scales['y-axis-0'].max;
-
-                const y0 = topYpixel + (
-                    (maxYValue - y2019)
-                    / (maxYValue - minYValue)
-                    * (bottomYpixel - topYpixel)
-                );
-                const y1 = topYpixel + (
-                    (maxYValue- y2020)
-                    / (maxYValue - minYValue)
-                    * (bottomYpixel - topYpixel)
-                );
-    
-                // draw line
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(x, y0);
-                ctx.lineTo(x, y1);
-                ctx.lineWidth = 2.0;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-                ctx.restore();
-            }
-        }
-        updateApp(state);
-    });
-
-    return rtn;
-}
 
 /**
  * Main
