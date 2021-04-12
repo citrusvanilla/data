@@ -515,20 +515,23 @@ function initChartCountry() {
                         autoSkip: false,
                         maxTicksLimit: 1000,
                         callback: function(value, index, values) {
-                            return ["1", "15"].includes(value.split(" ")[1])
+                            return ["1"].includes(value.split(" ")[1])
                                 ? value : undefined;
                         }
                     },
                     type: 'time',
                     time: {
                         unit: 'day',
-                        stepSize: 1
+                        stepSize: 1,
+                        displayFormats: {
+                            day: 'MMM D YY'
+                        }
                     },
                     gridLines: {
                         zeroLineColor: 'rgba(0, 0, 0, 0.1)',
                         display: true,
                         callback: function(value, index, values) {
-                            return ["1", "15"].includes(value.split(" ")[1])
+                            return ["1"].includes(value.split(" ")[1])
                                 ? true : false;
                         }
                     }

@@ -101,7 +101,7 @@ var settings = {
     },
     initialRegion: "country",
     yLabels: {
-        "country": "YoY_pct_change_in_postings_trend_from_feb1",
+        "country": "pct_chng_feb_1",
         "state": "% gap in trend over last year",
         "nation": "% gap in trend over last year",
         "metro": "% gap in trend over last year"
@@ -126,7 +126,8 @@ function shortDate(date) {
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
-    return months[date.getMonth()] + " " + date.getDate();
+    var shortYear = date.getFullYear().toString().split("").slice(2).join("");
+    return months[date.getMonth()] + " " + date.getDate() + ", '" + shortYear;
 }
 
 function updateAppMetro(data, metros, chart) {
@@ -499,7 +500,9 @@ function processData(metaData, region) {
         case "country":
             var processedData = {};
             for (var dataset of metaData) {
-                processedData[dataset.name] = dataset.data.map(row => {
+                processedData[dataset.name] = dataset.data.filter(row => {
+                    return row.variable === "new postings"
+                }).map(row => {
                     return {
                         x: row.date,
                         y: row[settings["yLabels"]["country"]]
@@ -554,37 +557,37 @@ function getDatasetsMeta(region) {
             return [
                 {
                     name: "Australia",
-                    filepath: "./AU/YoY_postings_trend_ratio_AU.csv",
+                    filepath: "./AU/aggregate_job_postings_AU.csv",
                     data: null
                 },
                 {
                     name: "Canada",
-                    filepath: "./CA/YoY_postings_trend_ratio_CA.csv",
+                    filepath: "./CA/aggregate_job_postings_CA.csv",
                     data: null
                 },
                 {
                     name: "France",
-                    filepath: "./FR/YoY_postings_trend_ratio_FR.csv",
+                    filepath: "./FR/aggregate_job_postings_FR.csv",
                     data: null
                 },
                 {
                     name: "Germany",
-                    filepath: "./DE/YoY_postings_trend_ratio_DE.csv",
+                    filepath: "./DE/aggregate_job_postings_DE.csv",
                     data: null
                 },
                 {
                     name: "Ireland",
-                    filepath: "./IE/YoY_postings_trend_ratio_IE.csv",
+                    filepath: "./IE/aggregate_job_postings_IE.csv",
                     data: null
                 },
                 {
                     name: "United Kingdom",
-                    filepath: "./GB/YoY_postings_trend_ratio_GB.csv",
+                    filepath: "./GB/aggregate_job_postings_GB.csv",
                     data: null
                 },
                 {
                     name: "United States",
-                    filepath: "./US/YoY_postings_trend_ratio_US.csv",
+                    filepath: "./US/aggregate_job_postings_US.csv",
                     data: null
                 },
             ];
