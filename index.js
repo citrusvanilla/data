@@ -448,7 +448,7 @@ function initializeTabCountry(processedData) {
     var chart = initChartCountry();
 
     // Style.
-    chartTitle.innerText = "Job Postings on Indeed by Country";
+    chartTitle.innerText = "New Job Postings on Indeed by Country";
     chartDatesP1.innerHTML = "";
 
     $(".postingsTrendByMetro").css('display','block');
