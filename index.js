@@ -94,17 +94,17 @@ var settings = {
             "New York",
         ],
         "metro": [
-            "Austin-Round Rock--TX",
-            "San Francisco-Oakland-Hayward--CA",
+            "Austin-Round Rock-Georgetown--TX",
+            "San Francisco-Oakland-Berkeley--CA",
             "New York-Newark-Jersey City--NY-NJ-PA"
         ]
     },
     initialRegion: "country",
     yLabels: {
         "country": "pct_chng_feb_1",
-        "state": "% gap in trend over last year",
+        "state": "pct_chng_feb_1",
         "nation": "% gap in trend over last year",
-        "metro": "% gap in trend over last year"
+        "metro": "pct_chng_feb_1"
     },
     availableColors: [
         ["#2557A7", 'notInUse'], // indeed blue
@@ -131,6 +131,8 @@ function shortDate(date) {
 }
 
 function updateAppMetro(data, metros, chart) {
+    console.log(metros);
+    console.log(data);
     // Update dates.
     if (metros.length) {
         chartDatesP1.innerHTML = (
@@ -172,7 +174,7 @@ function initializeTabMetro(processedData) {
     var chart = initChartMetro();
 
     // Style.
-    chartTitle.innerText = "Job Postings on Indeed by US Metro";
+    chartTitle.innerText = "Total Job Postings on Indeed by US Metro";
     chartDatesP1.innerHTML = "";
 
     // Style.
@@ -266,7 +268,7 @@ function initializeTabState(processedData) {
     var chart = initChartState();
 
     // Style.
-    chartTitle.innerText = "Job Postings on Indeed by US State";
+    chartTitle.innerText = "Total Job Postings on Indeed by US State";
     chartDatesP1.innerHTML = "";
 
     // Styling.
@@ -538,7 +540,7 @@ function processData(metaData, region) {
         case "metro":            
             var processedData = {};
             for (var row of metaData[0].data) {
-                var cleanName = row["CBSA_Title"].replace(", ", "--");
+                var cleanName = row["CBSA Title"].replace(", ", "--");
                 if (cleanName in processedData) {
                     processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["metro"]] }) 
                 } else {
@@ -601,14 +603,14 @@ function getDatasetsMeta(region) {
         case "state":
             return [
                 {
-                    filepath: "./US/state_pct_gap_in_trend.csv",
+                    filepath: "./US/state_job_postings_us.csv",
                     data: null
                 }
             ];
         case "metro":
             return [
                 {
-                    filepath: "./US/metro_pct_gap_in_trend.csv",
+                    filepath: "./US/metro_job_postings_us.csv",
                     data: null
                 }
             ];

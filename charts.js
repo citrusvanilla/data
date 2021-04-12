@@ -118,7 +118,7 @@ function initChartMetro() {
                         autoSkip: false,
                         maxTicksLimit: 1000,
                         callback: function(value, index, values) {
-                            return ["1", "15"].includes(value.split(" ")[1])
+                            return ["1"].includes(value.split(" ")[1])
                                 ? value : undefined;
                         }
                     },
@@ -131,7 +131,7 @@ function initChartMetro() {
                         zeroLineColor: 'rgba(0, 0, 0, 0.1)',
                         display: true,
                         callback: function(value, index, values) {
-                            return ["1", "15"].includes(value.split(" ")[1])
+                            return ["1"].includes(value.split(" ")[1])
                                 ? true : false;
                         }
                     }
@@ -173,7 +173,7 @@ function initChartState() {
               ctx.beginPath();
               ctx.moveTo(x, topY);
               ctx.lineTo(x, bottomY);
-              ctx.lineWidth = .5;
+              ctx.lineWidth = 0.5;
               ctx.strokeStyle = '#808080';
               ctx.stroke();
               ctx.restore();
@@ -250,20 +250,23 @@ function initChartState() {
                         autoSkip: false,
                         maxTicksLimit: 1000,
                         callback: function(value, index, values) {
-                            return ["1", "15"].includes(value.split(" ")[1])
+                            return ["1"].includes(value.split(" ")[1])
                                 ? value : undefined;
                         }
                     },
                     type: 'time',
                     time: {
                         unit: 'day',
-                        stepSize: 1
+                        stepSize: 1,
+                        displayFormats: {
+                            day: 'MMM D YY'
+                        }
                     },
                     gridLines: {
                         zeroLineColor: 'rgba(0, 0, 0, 0.1)',
                         display: true,
                         callback: function(value, index, values) {
-                            return ["1", "15"].includes(value.split(" ")[1])
+                            return ["1"].includes(value.split(" ")[1])
                                 ? true : false;
                         }
                     }
