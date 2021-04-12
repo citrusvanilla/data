@@ -448,7 +448,7 @@ function initializeTabCountry(processedData) {
     var chart = initChartCountry();
 
     // Style.
-    chartTitle.innerText = "New Job Postings on Indeed by Country";
+    chartTitle.innerText = "Total Job Postings on Indeed by Country";
     chartDatesP1.innerHTML = "";
 
     $(".postingsTrendByMetro").css('display','block');
@@ -501,7 +501,7 @@ function processData(metaData, region) {
             var processedData = {};
             for (var dataset of metaData) {
                 processedData[dataset.name] = dataset.data.filter(row => {
-                    return row.variable === "new postings"
+                    return row.variable === "total postings"
                 }).map(row => {
                     return {
                         x: row.date,
