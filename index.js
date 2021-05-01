@@ -82,42 +82,6 @@ var stateNameMap = Object.keys(stateAbvMap).reduce((a,c) => {
     return a;
 }, {});
 
-var settings = {
-    defaults: {
-        "country": [
-            "United States",
-            "Canada"
-        ],
-        "state": [
-            "Texas",
-            "California",
-            "New York",
-        ],
-        "metro": [
-            "Austin-Round Rock-Georgetown--TX",
-            "San Francisco-Oakland-Berkeley--CA",
-            "New York-Newark-Jersey City--NY-NJ-PA"
-        ]
-    },
-    initialRegion: "country",
-    yLabels: {
-        "country": "pct_chng_feb_1",
-        "state": "pct_chng_feb_1",
-        "nation": "% gap in trend over last year",
-        "metro": "pct_chng_feb_1"
-    },
-    availableColors: [
-        ["#2557A7", 'notInUse'], // indeed blue
-        ["#C74289", 'notInUse'], // Orange
-        ["#358271", 'notInUse'], // Yellow:
-        ["#C08A38", 'notInUse'], // Green
-        ["#6792F0", 'notInUse'], // Magenta
-        ["#EE99BF", 'notInUse'],  // Purple: 
-        ["#7BC0AE", 'notInUse'], // Light blue
-        ["#DF7838", 'notInUse']
-    ]
-}
-
 var currentRegion;
 
 
@@ -445,7 +409,7 @@ function updateAppCountry(data, countries, chart) {
     chart.update();
 };
 
-function initializeTabCountry(processedData) {
+function initializeTabCountry(processedData, country) {
     // Chart.
     var chart = initChartCountry();
 
@@ -622,10 +586,14 @@ function getDatasetsMeta(region) {
 /**
  * Main
  */
-function loadapp(region) {
+function loadapp(region, country) {
     // Turn on loader.
     document.querySelector("#loader").style.display = "block";
     document.querySelector("#cover").style.display = "block";
+
+    if (!["", "us"].includes(country.toLowerCase())) {
+        document.querySelector("#myTabs").style.display = "none";
+    };
 
     // Get meta data.
     var metaData = getDatasetsMeta(region);
@@ -653,7 +621,7 @@ function loadapp(region) {
             // Handle the data by chart type.
             switch(region) {
                 case "country":
-                    initializeTabCountry(processedData);
+                    initializeTabCountry(processedData, country);
                     break;
                 case "national":
                     initializeTabNational(processedData);
@@ -675,8 +643,6 @@ function loadapp(region) {
 };
 
 
-// Initialize App.
-loadapp(settings["initialRegion"]);
 
 // Listen for navigation change.
 $('#myTabs a').click(function (e) {
@@ -685,6 +651,93 @@ $('#myTabs a').click(function (e) {
         currentRegion = $(this)[0].attributes.region.value;
         $(this).tab('show')
         console.log("Loading", currentRegion)
-        loadapp(currentRegion);
+        loadapp(currentRegion, country);
     };
 });
+
+// Get the hash.
+var hash = window.location.hash;
+var country = hash.replace("#", "");
+
+var settings = {
+    defaults: {
+        "country": [
+            "United States",
+            "Canada"
+        ],
+        "state": [
+            "Texas",
+            "California",
+            "New York",
+        ],
+        "metro": [
+            "Austin-Round Rock-Georgetown--TX",
+            "San Francisco-Oakland-Berkeley--CA",
+            "New York-Newark-Jersey City--NY-NJ-PA"
+        ]
+    },
+    initialRegion: "country",
+    yLabels: {
+        "country": "pct_chng_feb_1",
+        "state": "pct_chng_feb_1",
+        "nation": "% gap in trend over last year",
+        "metro": "pct_chng_feb_1"
+    },
+    availableColors: [
+        ["#2557A7", 'notInUse'], // indeed blue
+        ["#C74289", 'notInUse'], // Orange
+        ["#358271", 'notInUse'], // Yellow:
+        ["#C08A38", 'notInUse'], // Green
+        ["#6792F0", 'notInUse'], // Magenta
+        ["#EE99BF", 'notInUse'],  // Purple: 
+        ["#7BC0AE", 'notInUse'], // Light blue
+        ["#DF7838", 'notInUse']
+    ]
+};
+
+switch(country.toLowerCase()) {
+    case "au":
+        settings["defaults"]["country"] = [
+            "Australia"
+        ]
+        break;
+    case "ca":
+        settings["defaults"]["country"] = [
+            "Canada"
+        ]
+        break;
+    case "fr":
+        settings["defaults"]["country"] = [
+            "France"
+        ]
+        break;
+    case "de":
+        settings["defaults"]["country"] = [
+            "Germany"
+        ]
+        break;
+    case "ie":
+        settings["defaults"]["country"] = [
+            "Ireland"
+        ]
+        break;
+    case "uk":
+        settings["defaults"]["country"] = [
+            "United Kingdom"
+        ]
+        break;
+    case "us":
+        settings["defaults"]["country"] = [
+            "United States"
+        ]
+        break;
+    default:
+        settings["defaults"]["country"] = [
+            "United States",
+            "Canada"
+        ]
+        break;
+};
+
+// Initialize App.
+loadapp(settings["initialRegion"], country);
