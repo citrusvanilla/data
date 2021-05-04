@@ -125,7 +125,10 @@ function initChartMetro() {
                     type: 'time',
                     time: {
                         unit: 'day',
-                        stepSize: 1
+                        stepSize: 1,
+                        displayFormats: {
+                            day: 'MMM D YY'
+                        }
                     },
                     gridLines: {
                         zeroLineColor: 'rgba(0, 0, 0, 0.1)',

@@ -90,8 +90,8 @@ function shortDate(date) {
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
-    var shortYear = date.getFullYear().toString().split("").slice(2).join("");
-    return months[date.getMonth()] + " " + date.getDate() + ", '" + shortYear;
+    var shortYear = date.getFullYear().toString();
+    return months[date.getMonth()] + " " + date.getDate() + ", " + shortYear;
 }
 
 function updateAppMetro(data, metros, chart) {
@@ -100,13 +100,13 @@ function updateAppMetro(data, metros, chart) {
     // Update dates.
     if (metros.length) {
         chartDatesP1.innerHTML = (
-            "7 day moving avg through "
-            + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
-        ).split(" ").join("&nbsp;") + ", ";
-        chartDatesP2.innerHTML = (
-            "indexed to "
+            "% change in job postings since "
             + shortDate(new Date(data[metros[0]][0].x))
         ).split(" ").join("&nbsp;");    
+        chartDatesP2.innerHTML = (
+            ", seasonally adjusted, to "
+            + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
+        ).split(" ").join("&nbsp;");
     };
 
     // Swap old with new datasets.
@@ -195,13 +195,13 @@ function updateAppState(data, states, chart) {
     // Update dates.
     if (states.length) {
         chartDatesP1.innerHTML = (
-            "7 day moving avg through "
-            + shortDate(new Date(data[statesAbvs[0]][data[statesAbvs[0]].length - 1].x))
-        ).split(" ").join("&nbsp;") + ", ";
-        chartDatesP2.innerHTML = (
-            "indexed to "
+            "% change in job postings since "
             + shortDate(new Date(data[statesAbvs[0]][0].x))
         ).split(" ").join("&nbsp;");    
+        chartDatesP2.innerHTML = (
+            ", seasonally adjusted, to "
+            + shortDate(new Date(data[statesAbvs[0]][data[statesAbvs[0]].length - 1].x))
+        ).split(" ").join("&nbsp;");
     };
 
     chart.data.labels.pop();
@@ -286,13 +286,13 @@ function updateAppNational(data, metros, chart) {
     // Update dates.
     if (metros.length) {
         chartDatesP1.innerHTML = (
-            "7 day moving avg through "
-            + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
-        ).split(" ").join("&nbsp;") + ", ";
-        chartDatesP2.innerHTML = (
-            "indexed to "
+            "% change in job postings since "
             + shortDate(new Date(data[metros[0]][0].x))
         ).split(" ").join("&nbsp;");    
+        chartDatesP2.innerHTML = (
+            ", seasonally adjusted, to "
+            + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
+        ).split(" ").join("&nbsp;");
     };
 
     // Swap old with new datasets.
@@ -376,13 +376,13 @@ function updateAppCountry(data, countries, chart) {
     // Update dates.
     if (countries.length) {
         chartDatesP1.innerHTML = (
-            "7 day moving avg through "
-            + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x))
-        ).split(" ").join("&nbsp;") + ", ";
-        chartDatesP2.innerHTML = (
-            "indexed to "
+            "% change in job postings since "
             + shortDate(new Date(data[countries[0]][0].x))
         ).split(" ").join("&nbsp;");    
+        chartDatesP2.innerHTML = (
+            ", seasonally adjusted, to "
+            + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x))
+        ).split(" ").join("&nbsp;"); 
     };
 
     // Swap old with new datasets.
