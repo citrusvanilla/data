@@ -11,7 +11,6 @@ var directoryIdMap = {
     DE: "Germany",
     FR: "France",
     GB: "UK",
-    IE: "Ireland",
     US: "United States"
 };
 
@@ -94,9 +93,99 @@ function shortDate(date) {
     return months[date.getMonth()] + " " + date.getDate() + ", " + shortYear;
 }
 
+function updateAppSector(data, sectors, chart) {
+    // Update dates.
+    if (sectors.length) {
+        chartDatesP1.innerHTML = (
+            "% change in job postings since "
+            + shortDate(new Date(data[sectors[0]][0].x))
+        ).split(" ").join("&nbsp;");    
+        chartDatesP2.innerHTML = (
+            ", seasonally adjusted, to "
+            + shortDate(new Date(data[sectors[0]][data[sectors[0]].length - 1].x))
+        ).split(" ").join("&nbsp;");
+    };
+
+    // Swap old with new datasets.
+    chart.data.labels.pop();
+    while (chart.data.datasets.length) { chart.data.datasets.pop() };
+    for (var i = 0; i < sectors.length; i++) {
+        chart.data.datasets.push({
+            label: sectors[i],
+            data: data[sectors[i]],
+            fill: false,
+            borderColor: settings["availableColors"][i][0],
+            borderWidth: 3.0,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: settings["availableColors"][i][0],
+            pointHoverBorderColor: "#000000"
+        });
+
+        // Update colors.
+        $(".tag")
+            .filter(function() { return this.innerText == sectors[i]; })
+            .css('background-color', settings["availableColors"][i][0]);
+    };
+    chart.update();
+};
+
+function initializeTabSector(processedData) {
+    // Chart.
+    var chart = initChartSector();
+
+    // Style.
+    chartTitle.innerText = "Total Job Postings on Indeed by Sector";
+    chartDatesP1.innerHTML = "";
+
+    // Style.
+    $("#search-container").css('display','block');
+    selectionsContainer.style.display = "flex";
+    selectionsPrompt.style.display = "block";
+    selectionsPrompt.innerText = "Search for sectors in the box below (limit 8):";
+
+    // Sets the options for the typeahead input.
+    if (document.querySelector(".bootstrap-tagsinput")) {
+        document.querySelector(".tagsinput-typeahead").remove();
+        document.querySelector(".bootstrap-tagsinput").remove();
+        var tagsTA = document.createElement("input");
+        tagsTA.classList.add("tagsinput-typeahead");
+        tagsTA.setAttribute("type", "text");
+        document.querySelector("#search-container").appendChild(tagsTA);
+    };
+
+    // Sets the options for the typeahead input.
+    $('.tagsinput-typeahead').tagsinput({
+        maxTags: 8,
+        typeahead: {
+            source: Object.keys(processedData),
+            limit: 3,
+            afterSelect: function() {
+                this.$element[0].value = '';
+            }
+        }
+    });
+
+    // Seed the options.
+    settings["defaults"]['sector'].forEach((m,i) => {
+        $('.tagsinput-typeahead').tagsinput('add', m);
+        $(".tag")
+            .filter(function() { return this.innerText == m; })
+            .css('background-color', settings["availableColors"][i][0]);
+    });
+    updateAppSector(processedData, settings["defaults"]['sector'], chart);
+
+    // Listen for updates.
+    $('.tagsinput-typeahead').change(function() {    
+        updateAppSector(
+            processedData,
+            $('.tagsinput-typeahead').tagsinput('items'),
+            chart
+        );
+    });
+};
+
 function updateAppMetro(data, metros, chart) {
-    console.log(metros);
-    console.log(data);
     // Update dates.
     if (metros.length) {
         chartDatesP1.innerHTML = (
@@ -420,7 +509,7 @@ function initializeTabCountry(processedData, country) {
     $(".postingsTrendByMetro").css('display','block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
-    selectionsPrompt.innerText = "Select Australia, Canada, France, Germany, Ireland, United Kingdom, and/or United States below:";
+    selectionsPrompt.innerText = "Select Australia, Canada, France, Germany, United Kingdom, and/or United States below:";
 
     // Sets the options for the typeahead input.
     if (document.querySelector(".bootstrap-tagsinput")) {
@@ -512,12 +601,23 @@ function processData(metaData, region) {
                 };
             };
             return processedData;
+        case "sector":            
+            var processedData = {};
+            for (var row of metaData[0].data) {
+                var cleanName = row["display_name"];
+                if (cleanName in processedData) {
+                    processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["sector"]] }) 
+                } else {
+                    processedData[cleanName] = [{ x: row.date, y: row[settings["yLabels"]["sector"]] }];
+                };
+            };
+            return processedData;
         default:
             break;
     };
 };
 
-function getDatasetsMeta(region) {
+function getDatasetsMeta(region, country) {
     switch (region) {
         case "country":
             return [
@@ -539,11 +639,6 @@ function getDatasetsMeta(region) {
                 {
                     name: "Germany",
                     filepath: "./DE/aggregate_job_postings_DE.csv",
-                    data: null
-                },
-                {
-                    name: "Ireland",
-                    filepath: "./IE/aggregate_job_postings_IE.csv",
                     data: null
                 },
                 {
@@ -578,6 +673,65 @@ function getDatasetsMeta(region) {
                     data: null
                 }
             ];
+        case "sector":
+            switch (country) {
+                case "au":
+                    return [
+                        {
+                            name: "Australia",
+                            filepath: "./AU/job_postings_by_sectorAU.csv",
+                            data: null
+                        }
+                    ]
+                case "ca":
+                    return [
+                        {
+                            name: "Canada",
+                            filepath: "./CA/job_postings_by_sectorCA.csv",
+                            data: null
+                        }
+                    ]
+                case "fr":
+                    return [
+                        {
+                            name: "France",
+                            filepath: "./FR/job_postings_by_sectorFR.csv",
+                            data: null
+                        }
+                    ]
+                case "de":
+                    return [
+                        {
+                            name: "Germany",
+                            filepath: "./DE/job_postings_by_sectorDE.csv",
+                            data: null
+                        }
+                    ]
+                case "gb":
+                    return [
+                        {
+                            name: "United Kingdom",
+                            filepath: "./GB/job_postings_by_sectorGB.csv",
+                            data: null
+                        }
+                    ]
+                case "us":
+                    return [
+                        {
+                            name: "United States",
+                            filepath: "./US/job_postings_by_sectorUS.csv",
+                            data: null
+                        }
+                    ]
+                default:
+                    return [
+                        {
+                            name: "United States",
+                            filepath: "./US/job_postings_by_sectorUS.csv",
+                            data: null
+                        }
+                    ]
+            }
         default:
             break;
     };
@@ -592,11 +746,12 @@ function loadapp(region, country) {
     document.querySelector("#cover").style.display = "block";
 
     if (!["", "us"].includes(country.toLowerCase())) {
-        document.querySelector("#myTabs").style.display = "none";
+        document.querySelector("#stateTab").style.display = "none";
+        document.querySelector("#metroTab").style.display = "none";
     };
 
     // Get meta data.
-    var metaData = getDatasetsMeta(region);
+    var metaData = getDatasetsMeta(region, country);
 
     // Read in all the required data.
     Promise.all(metaData.map(d => d3.csv(d.filepath)))
@@ -632,6 +787,9 @@ function loadapp(region, country) {
                 case "metro":
                     initializeTabMetro(processedData);
                     break;
+                case "sector":
+                    initializeTabSector(processedData);
+                    break;
                 default:
                     break;
             };
@@ -657,7 +815,7 @@ $('#myTabs a').click(function (e) {
 
 // Get the hash.
 var hash = window.location.hash;
-var country = hash.replace("#", "");
+var country = hash.replace("#", "").toLowerCase();
 
 var settings = {
     defaults: {
@@ -674,6 +832,10 @@ var settings = {
             "Austin-Round Rock-Georgetown--TX",
             "San Francisco-Oakland-Berkeley--CA",
             "New York-Newark-Jersey City--NY-NJ-PA"
+        ],
+        "sector": [
+            "Hospitality & Tourism",
+            "Software Development"
         ]
     },
     initialRegion: "country",
@@ -681,7 +843,8 @@ var settings = {
         "country": "pct_chng_feb_1",
         "state": "pct_chng_feb_1",
         "nation": "% gap in trend over last year",
-        "metro": "pct_chng_feb_1"
+        "metro": "pct_chng_feb_1",
+        "sector": "pct_chng_feb_1"
     },
     availableColors: [
         ["#2557A7", 'notInUse'], // indeed blue
@@ -714,11 +877,6 @@ switch(country.toLowerCase()) {
     case "de":
         settings["defaults"]["country"] = [
             "Germany"
-        ]
-        break;
-    case "ie":
-        settings["defaults"]["country"] = [
-            "Ireland"
         ]
         break;
     case "uk":
