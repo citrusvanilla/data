@@ -135,14 +135,14 @@ function initializeTabSector(processedData) {
     var chart = initChartSector();
 
     // Style.
-    chartTitle.innerText = "Total Job Postings on Indeed by Sector";
+    chartTitle.innerText = "Total Job Postings on Indeed by Occupational Sector";
     chartDatesP1.innerHTML = "";
 
     // Style.
     $("#search-container").css('display','block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
-    selectionsPrompt.innerText = "Search for sectors in the box below (limit 8):";
+    selectionsPrompt.innerText = "Search for occupational sectors in the box below (limit 8):";
 
     // Sets the options for the typeahead input.
     if (document.querySelector(".bootstrap-tagsinput")) {
