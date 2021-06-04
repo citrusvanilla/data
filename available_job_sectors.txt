@@ -1,0 +1,52 @@
+List of available job sectors, effective June 03, 2021 (not all territories contain all sectors):
+
+Accounting
+Administrative Assistance
+Agriculture & Forestry
+Architecture
+Arts & Entertainment
+Banking & Finance
+Beauty & Wellness
+Childcare
+Civil Engineering
+Cleaning & Sanitation
+Community & Social Service
+Construction
+Customer Service
+Dental
+Driving
+Education & Instruction
+Electrical Engineering
+Food Preparation & Service
+Hospitality & Tourism
+Human Resources
+IT Operations & Helpdesk
+Industrial Engineering
+Information Design & Documentation
+Installation & Maintenance
+Insurance
+Legal
+Loading & Stocking
+Logistic Support
+Management
+Marketing
+Mathematics
+Media & Communications
+Medical Information
+Medical Technician
+Nursing
+Personal Care & Home Health
+Pharmacy
+Physicians & Surgeons
+Production & Manufacturing
+Project Management
+Real Estate
+Retail
+Sales
+Scientific Research & Development
+Security & Public Safety
+Social Science
+Software Development
+Sports
+Therapy
+Veterinary

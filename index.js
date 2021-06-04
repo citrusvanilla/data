@@ -1,4 +1,6 @@
 // Selections
+const availableJobSectorsURL = "https://raw.githubusercontent.com/citrusvanilla/data/visualization-data/available_job_sectors.txt";
+
 var chartTitle = document.querySelector("#chart-title");
 var chartDatesP1 = document.querySelector("#chart-dates-p1");
 var chartDatesP2 = document.querySelector("#chart-dates-p2");
@@ -142,7 +144,8 @@ function initializeTabSector(processedData) {
     $("#search-container").css('display','block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
-    selectionsPrompt.innerText = "Search for occupational sectors in the box below (limit 8):";
+
+    selectionsPrompt.innerHTML = `Search for <a href=${availableJobSectorsURL} target="_blank">available occupational sectors</a> in the box below (limit 8):`;
 
     // Sets the options for the typeahead input.
     if (document.querySelector(".bootstrap-tagsinput")) {
