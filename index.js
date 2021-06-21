@@ -1,11 +1,97 @@
 // Selections
-const availableJobSectorsURL = "https://raw.githubusercontent.com/citrusvanilla/data/visualization-data/available_job_sectors.txt";
+var availableJobSectorsURL = "https://raw.githubusercontent.com/citrusvanilla/data/visualization-data/available_job_sectors.txt";
 
 var chartTitle = document.querySelector("#chart-title");
 var chartDatesP1 = document.querySelector("#chart-dates-p1");
 var chartDatesP2 = document.querySelector("#chart-dates-p2");
 var selectionsContainer = document.querySelector("#selections-container");
 var selectionsPrompt = document.querySelector("#selections-prompt");
+
+var translations = {
+    "fr": {
+        "country": {
+            "tab": "Pays",
+            "title": "Nombre total d'offres d'emploi publiées sur Indeed par pays",
+            "subtitleP1": "Variation saisonnalisée des pourcentages d'offres d'emploi publiées depuis le ",
+            "subtitleP2": " jusqu'au ",
+            "directive": "Sélectionnez l'Australie, le Canada, la France, l'Allemagne, le Royaume-Uni et/ou les États-Unis ci-dessous:",
+            "selections": {
+                "Australia": "Australie",
+                "Canada": "Canada",
+                "France": "France",
+                "Germany": "Allemagne",
+                "United Kingdom": "Royaume-Uni",
+                "United States": "États-Unis"
+            }
+        },
+        "sector": {
+            "tab": "FR- Sectors",
+            "title": "FR - title",
+            "subtitle": "FR - subtitle",
+            "directive": "FR - directive",
+            "selections": {
+                "Accounting": "Comptabilité",
+                "Administrative Assistance": "Assistance Administrative",
+                "Agriculture & Forestry": "Agriculture et foresterie",
+                "Architecture": "Architecture",
+                "Arts & Entertainment": "Culture et loisirs",
+                "Banking & Finance": "Banque et finance",
+                "Beauty & Wellness": "Beauté et bien-être",
+                "Childcare": "Puériculture",
+                "Civil Engineering": "Ingénierie civile",
+                "Cleaning & Sanitation": "Nettoyage et assainissement",
+                "Community & Social Service": "Service social et communautaire",
+                "Construction": "BTP",
+                "Customer Service": "Service à la clientèle",
+                "Dental": "Dentaire",
+                "Driving": "Conduite",
+                "Education & Instruction": "Éducation et enseignement",
+                "Electrical Engineering": "Ingénierie électrique",
+                "Food Preparation & Service": "Préparation et service des repas",
+                "Hospitality & Tourism": "Hôtellerie et tourisme",
+                "Human Resources": "Ressources humaines",
+                "IT Operations & Helpdesk": "Opérations informatiques et service d'assistance",
+                "Industrial Engineering": "Génie industriel",
+                "Information Design & Documentation": "Design de l'information et documentation",
+                "Installation & Maintenance": "Installation et maintenance",
+                "Insurance": "Assurance",
+                "Legal": "Services juridiques",
+                "Loading & Stocking": "Chargement et stockage",
+                "Logistic Support": "Soutien logistique",
+                "Management": "Direction",
+                "Marketing": "Marketing",
+                "Mathematics": "Mathématiques",
+                "Media & Communications": "Médias et communications",
+                "Medical Information": "Informations médicales",
+                "Medical Technician": "Technique médicale",
+                "Nursing": "Soins",
+                "Personal Care & Home Health": "Soins personnels et médicaux à domicile",
+                "Pharmacy": "Pharmacie",
+                "Physicians & Surgeons": "Médecine et chirurgie",
+                "Production & Manufacturing": "Production et fabrication",
+                "Project Management": "Gestion de projets",
+                "Real Estate": "Immobilier",
+                "Retail": "Commerce de détail",
+                "Sales": "Ventes",
+                "Scientific Research & Development": "Recherche scientifique et développement",
+                "Security & Public Safety": "Sûreté et sécurité publique",
+                "Social Science": "Sciences sociales",
+                "Software Development": "Développement de logiciel",
+                "Sports": "Sport",
+                "Therapy": "Thérapie",
+                "Veterinary": "Vétérinaire"
+            }
+        }
+    }
+};
+
+function translateGeo(name, region, country) {
+    if (country.toLowerCase() === "fr") {
+        return translations.fr[region].selections[name];
+    } else {
+        return name;
+    }
+}
 
 var directoryIdMap = {
     AU: "Australia",
@@ -86,13 +172,43 @@ var stateNameMap = Object.keys(stateAbvMap).reduce((a, c) => {
 var currentRegion;
 
 
-function shortDate(date) {
+function shortDate(date, country) {
     var months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
+    var monthsFR = [
+        'janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin',
+        'juill.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'
+    ];
     var shortYear = date.getFullYear().toString();
-    return months[date.getMonth()] + " " + date.getDate() + ", " + shortYear;
+    if (country !== undefined && country.toLowerCase() === "fr") {
+        var dayN = date.getDate();
+        if (dayN === 1) {
+            return date.getDate() + "er " + monthsFR[date.getMonth()] + " " + shortYear;
+        } else {
+            return date.getDate() + " " + monthsFR[date.getMonth()] + " " + shortYear;
+        }
+
+    } else {
+        return months[date.getMonth()] + " " + date.getDate() + ", " + shortYear;
+    }
+}
+
+function subtitleP1(country) {
+    if (country.toLowerCase() === "fr") {
+        return translations.fr.country.subtitleP1;
+    } else {
+        return "% change in job postings since ";
+    }
+}
+
+function subtitleP2(country) {
+    if (country.toLowerCase() === "fr") {
+        return translations.fr.country.subtitleP2;
+    } else {
+        return ", seasonally adjusted, to ";
+    }
 }
 
 function updateAppSector(data, sectors, chart) {
@@ -106,7 +222,7 @@ function updateAppSector(data, sectors, chart) {
             ", seasonally adjusted, to "
             + shortDate(new Date(data[sectors[0]][data[sectors[0]].length - 1].x))
         ).split(" ").join("&nbsp;");
-    };
+    }
 
     // Swap old with new datasets.
     chart.data.labels.pop();
@@ -128,16 +244,21 @@ function updateAppSector(data, sectors, chart) {
         $(".tag")
             .filter(function () { return this.innerText == sectors[i]; })
             .css('background-color', settings["availableColors"][i][0]);
-    };
+    }
     chart.update();
-};
+}
 
-function initializeTabSector(processedData) {
+function initializeTabSector(processedData, country) {
     // Chart.
     var chart = initChartSector();
 
     // Style.
-    chartTitle.innerText = "Total Job Postings on Indeed by Occupational Sector";
+    if (country.toLowerCase() === "fr") {
+        chartTitle.innerText = translations.fr.sector.title;
+    } else {
+        chartTitle.innerText = "Total Job Postings on Indeed by Occupational Sector";
+    }
+
     chartDatesP1.innerHTML = "";
 
     // Style.
@@ -186,7 +307,7 @@ function initializeTabSector(processedData) {
             chart
         );
     });
-};
+}
 
 function updateAppMetro(data, metros, chart) {
     // Update dates.
@@ -199,11 +320,11 @@ function updateAppMetro(data, metros, chart) {
             ", seasonally adjusted, to "
             + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
         ).split(" ").join("&nbsp;");
-    };
+    }
 
     // Swap old with new datasets.
     chart.data.labels.pop();
-    while (chart.data.datasets.length) { chart.data.datasets.pop() };
+    while (chart.data.datasets.length) { chart.data.datasets.pop(); }
     for (var i = 0; i < metros.length; i++) {
         chart.data.datasets.push({
             label: metros[i],
@@ -221,9 +342,9 @@ function updateAppMetro(data, metros, chart) {
         $(".tag")
             .filter(function () { return this.innerText == metros[i]; })
             .css('background-color', settings["availableColors"][i][0]);
-    };
+    }
     chart.update();
-};
+}
 
 function initializeTabMetro(processedData) {
     // Chart.
@@ -278,11 +399,11 @@ function initializeTabMetro(processedData) {
             chart
         );
     });
-};
+}
 
 function updateAppState(data, states, chart) {
 
-    var statesAbvs = states.map(s => stateNameMap[s]);
+    var statesAbvs = states.map(function (s) { return stateNameMap[s]; });
 
     // Update dates.
     if (states.length) {
@@ -297,7 +418,7 @@ function updateAppState(data, states, chart) {
     };
 
     chart.data.labels.pop();
-    while (chart.data.datasets.length) { chart.data.datasets.pop() };
+    while (chart.data.datasets.length) { chart.data.datasets.pop(); }
     for (var i = 0; i < statesAbvs.length; i++) {
         chart.data.datasets.push({
             label: statesAbvs[i],
@@ -315,9 +436,9 @@ function updateAppState(data, states, chart) {
         $(".tag")
             .filter(function () { return this.innerText == states[i]; })
             .css('background-color', settings["availableColors"][i][0]);
-    };
+    }
     chart.update();
-};
+}
 
 function initializeTabState(processedData) {
     // Chart.
@@ -372,7 +493,7 @@ function initializeTabState(processedData) {
             chart
         );
     });
-};
+}
 
 function updateAppNational(data, metros, chart) {
     // Update dates.
@@ -409,7 +530,7 @@ function updateAppNational(data, metros, chart) {
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
-};
+}
 
 function initializeTabNational(processedData) {
     // Chart.
@@ -462,19 +583,19 @@ function initializeTabNational(processedData) {
             chart
         );
     });
-};
+}
 
-function updateAppCountry(data, countries, chart) {
+function updateAppCountry(data, countries, chart, country) {
     // Update dates.
     if (countries.length) {
         chartDatesP1.innerHTML = (
-            "% change in job postings since "
-            + shortDate(new Date(data[countries[0]][0].x))
-        ).split(" ").join("&nbsp;");
+            subtitleP1(country)
+            + shortDate(new Date(data[countries[0]][0].x), country)
+        );
         chartDatesP2.innerHTML = (
-            ", seasonally adjusted, to "
-            + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x))
-        ).split(" ").join("&nbsp;");
+            subtitleP2(country)
+            + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x), country)
+        );
     };
 
     // Swap old with new datasets.
@@ -499,20 +620,29 @@ function updateAppCountry(data, countries, chart) {
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
-};
+}
 
 function initializeTabCountry(processedData, country) {
     // Chart.
-    var chart = initChartCountry();
+    var chart = initChartCountry(country);
 
     // Style.
-    chartTitle.innerText = "Total Job Postings on Indeed by Country";
+    if (country.toLowerCase() === "fr") {
+        chartTitle.innerText = translations.fr.country.title;
+    } else {
+        chartTitle.innerText = "Total Job Postings on Indeed by Country";
+    }
+
     chartDatesP1.innerHTML = "";
 
     $(".postingsTrendByMetro").css('display', 'block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
-    selectionsPrompt.innerText = "Select Australia, Canada, France, Germany, United Kingdom, and/or United States below:";
+    if (country.toLowerCase() === "fr") {
+        selectionsPrompt.innerText = translations.fr.country.directive;
+    } else {
+        selectionsPrompt.innerText = "Select Australia, Canada, France, Germany, United Kingdom, and/or United States below:";
+    }
 
     // Sets the options for the typeahead input.
     if (document.querySelector(".bootstrap-tagsinput")) {
@@ -541,24 +671,25 @@ function initializeTabCountry(processedData, country) {
             .filter(function () { return this.innerText == m; })
             .css('background-color', settings["availableColors"][i][0]);
     });
-    updateAppCountry(processedData, settings["defaults"]["country"], chart);
+    updateAppCountry(processedData, settings["defaults"]["country"], chart, country);
 
     // Listen for updates.
     $('.tagsinput-typeahead').change(function () {
         updateAppCountry(
             processedData,
             $('.tagsinput-typeahead').tagsinput('items'),
-            chart
+            chart,
+            country
         );
     });
-};
+}
 
-function processData(metaData, region) {
+function processData(metaData, region, country) {
     switch (region) {
         case "country":
             var processedData = {};
             for (var dataset of metaData) {
-                processedData[dataset.name] = dataset.data.filter(row => {
+                processedData[translateGeo(dataset.name, region, country)] = dataset.data.filter(row => {
                     return row.variable === "total postings"
                 }).map(row => {
                     return {
@@ -753,14 +884,19 @@ function loadapp(region, country) {
         document.querySelector("#metroTab").style.display = "none";
     };
 
+    // Change HTML for languages.
+    if (country.toLowerCase() === "fr") {
+        document.querySelector("#countryTab a").innerText = translations["fr"]["country"]["tab"];
+        document.querySelector("#sectorTab a").innerText = translations["fr"]["sector"]["tab"];
+    }
+
     // Get meta data.
     var metaData = getDatasetsMeta(region, country);
 
     // Read in all the required data.
-    Promise.all(metaData.map(d => d3.csv(d.filepath)))
+    Promise.all(metaData.map(function (d) { return d3.csv(d.filepath); }))
         .catch(function (err) { return console.log(err); })
         .then(function (files) {
-            console.log("All data loaded successfully.");
             for (var i = 0; i < files.length; i++) {
                 metaData[i].data = files[i].map(function (data) {
                     var newDate = new Date(data.date);
@@ -774,7 +910,7 @@ function loadapp(region, country) {
                 });
             };
 
-            var processedData = processData(metaData, region);
+            var processedData = processData(metaData, region, country);
 
             // Handle the data by chart type.
             switch (region) {
@@ -791,7 +927,7 @@ function loadapp(region, country) {
                     initializeTabMetro(processedData);
                     break;
                 case "sector":
-                    initializeTabSector(processedData);
+                    initializeTabSector(processedData, country);
                     break;
                 default:
                     break;
@@ -811,7 +947,6 @@ $('#myTabs a').click(function (e) {
     if ($(this)[0].attributes.region.value != currentRegion) {
         currentRegion = $(this)[0].attributes.region.value;
         $(this).tab('show')
-        console.log("Loading", currentRegion)
         loadapp(currentRegion, country);
     };
 });
