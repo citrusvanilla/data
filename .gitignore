@@ -11,3 +11,5 @@ dashboard/*
 **.icloud
 normcat_vetting
 normcat_vetting/*
+**settings.json
+**.py

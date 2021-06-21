@@ -78,7 +78,7 @@ var stateAbvMap = {
     "wy": "Wyoming"
 };
 
-var stateNameMap = Object.keys(stateAbvMap).reduce((a,c) => {
+var stateNameMap = Object.keys(stateAbvMap).reduce((a, c) => {
     a[stateAbvMap[c]] = c;
     return a;
 }, {});
@@ -101,7 +101,7 @@ function updateAppSector(data, sectors, chart) {
         chartDatesP1.innerHTML = (
             "% change in job postings since "
             + shortDate(new Date(data[sectors[0]][0].x))
-        ).split(" ").join("&nbsp;");    
+        ).split(" ").join("&nbsp;");
         chartDatesP2.innerHTML = (
             ", seasonally adjusted, to "
             + shortDate(new Date(data[sectors[0]][data[sectors[0]].length - 1].x))
@@ -126,7 +126,7 @@ function updateAppSector(data, sectors, chart) {
 
         // Update colors.
         $(".tag")
-            .filter(function() { return this.innerText == sectors[i]; })
+            .filter(function () { return this.innerText == sectors[i]; })
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
@@ -141,7 +141,7 @@ function initializeTabSector(processedData) {
     chartDatesP1.innerHTML = "";
 
     // Style.
-    $("#search-container").css('display','block');
+    $("#search-container").css('display', 'block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
 
@@ -163,23 +163,23 @@ function initializeTabSector(processedData) {
         typeahead: {
             source: Object.keys(processedData),
             limit: 3,
-            afterSelect: function() {
+            afterSelect: function () {
                 this.$element[0].value = '';
             }
         }
     });
 
     // Seed the options.
-    settings["defaults"]['sector'].forEach((m,i) => {
+    settings["defaults"]['sector'].forEach((m, i) => {
         $('.tagsinput-typeahead').tagsinput('add', m);
         $(".tag")
-            .filter(function() { return this.innerText == m; })
+            .filter(function () { return this.innerText == m; })
             .css('background-color', settings["availableColors"][i][0]);
     });
     updateAppSector(processedData, settings["defaults"]['sector'], chart);
 
     // Listen for updates.
-    $('.tagsinput-typeahead').change(function() {    
+    $('.tagsinput-typeahead').change(function () {
         updateAppSector(
             processedData,
             $('.tagsinput-typeahead').tagsinput('items'),
@@ -194,7 +194,7 @@ function updateAppMetro(data, metros, chart) {
         chartDatesP1.innerHTML = (
             "% change in job postings since "
             + shortDate(new Date(data[metros[0]][0].x))
-        ).split(" ").join("&nbsp;");    
+        ).split(" ").join("&nbsp;");
         chartDatesP2.innerHTML = (
             ", seasonally adjusted, to "
             + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
@@ -219,7 +219,7 @@ function updateAppMetro(data, metros, chart) {
 
         // Update colors.
         $(".tag")
-            .filter(function() { return this.innerText == metros[i]; })
+            .filter(function () { return this.innerText == metros[i]; })
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
@@ -234,7 +234,7 @@ function initializeTabMetro(processedData) {
     chartDatesP1.innerHTML = "";
 
     // Style.
-    $(".postingsTrendByMetro").css('display','block');
+    $(".postingsTrendByMetro").css('display', 'block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
     selectionsPrompt.innerText = "Search for metros in the box below (limit 8):";
@@ -255,23 +255,23 @@ function initializeTabMetro(processedData) {
         typeahead: {
             source: Object.keys(processedData),
             limit: 3,
-            afterSelect: function() {
+            afterSelect: function () {
                 this.$element[0].value = '';
             }
         }
     });
 
     // Seed the options.
-    settings["defaults"]['metro'].forEach((m,i) => {
+    settings["defaults"]['metro'].forEach((m, i) => {
         $('.tagsinput-typeahead').tagsinput('add', m);
         $(".tag")
-            .filter(function() { return this.innerText == m; })
+            .filter(function () { return this.innerText == m; })
             .css('background-color', settings["availableColors"][i][0]);
     });
     updateAppMetro(processedData, settings["defaults"]['metro'], chart);
 
     // Listen for updates.
-    $('.tagsinput-typeahead').change(function() {    
+    $('.tagsinput-typeahead').change(function () {
         updateAppMetro(
             processedData,
             $('.tagsinput-typeahead').tagsinput('items'),
@@ -289,7 +289,7 @@ function updateAppState(data, states, chart) {
         chartDatesP1.innerHTML = (
             "% change in job postings since "
             + shortDate(new Date(data[statesAbvs[0]][0].x))
-        ).split(" ").join("&nbsp;");    
+        ).split(" ").join("&nbsp;");
         chartDatesP2.innerHTML = (
             ", seasonally adjusted, to "
             + shortDate(new Date(data[statesAbvs[0]][data[statesAbvs[0]].length - 1].x))
@@ -313,7 +313,7 @@ function updateAppState(data, states, chart) {
 
         // Update colors.
         $(".tag")
-            .filter(function() { return this.innerText == states[i]; })
+            .filter(function () { return this.innerText == states[i]; })
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
@@ -348,24 +348,24 @@ function initializeTabState(processedData) {
         typeahead: {
             source: Object.keys(processedData).map(stateAbv => stateAbvMap[stateAbv]),
             limit: 3,
-            afterSelect: function() {
+            afterSelect: function () {
                 this.$element[0].value = '';
             },
-           
+
         }
     });
 
     // Seed the options.
-    settings["defaults"]["state"].forEach((m,i) => {
+    settings["defaults"]["state"].forEach((m, i) => {
         $('.tagsinput-typeahead').tagsinput('add', m);
         $(".tag")
-            .filter(function() { return this.innerText == m; })
+            .filter(function () { return this.innerText == m; })
             .css('background-color', settings["availableColors"][i][0]);
     });
     updateAppState(processedData, settings["defaults"]["state"], chart);
 
     // Listen for updates.
-    $('.tagsinput-typeahead').change(function() {
+    $('.tagsinput-typeahead').change(function () {
         updateAppState(
             processedData,
             $('.tagsinput-typeahead').tagsinput('items'),
@@ -380,7 +380,7 @@ function updateAppNational(data, metros, chart) {
         chartDatesP1.innerHTML = (
             "% change in job postings since "
             + shortDate(new Date(data[metros[0]][0].x))
-        ).split(" ").join("&nbsp;");    
+        ).split(" ").join("&nbsp;");
         chartDatesP2.innerHTML = (
             ", seasonally adjusted, to "
             + shortDate(new Date(data[metros[0]][data[metros[0]].length - 1].x))
@@ -405,7 +405,7 @@ function updateAppNational(data, metros, chart) {
 
         // Update colors.
         $(".tag")
-            .filter(function() { return this.innerText == metros[i]; })
+            .filter(function () { return this.innerText == metros[i]; })
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
@@ -420,7 +420,7 @@ function initializeTabNational(processedData) {
     chartDatesP1.innerHTML = "";
 
     // Style.
-    $(".postingsTrendByMetro").css('display','block');
+    $(".postingsTrendByMetro").css('display', 'block');
     selectionsContainer.style.display = "none";
     selectionsPrompt.style.display = "none";
 
@@ -439,23 +439,23 @@ function initializeTabNational(processedData) {
         typeahead: {
             source: Object.keys(processedData),
             limit: 3,
-            afterSelect: function() {
+            afterSelect: function () {
                 this.$element[0].value = '';
             }
         }
     });
 
     // Seed the options.
-    Object.keys(processedData).forEach((m,i) => {
+    Object.keys(processedData).forEach((m, i) => {
         $('.tagsinput-typeahead').tagsinput('add', m);
         $(".tag")
-            .filter(function() { return this.innerText == m; })
+            .filter(function () { return this.innerText == m; })
             .css('background-color', settings["availableColors"][i][0]);
     });
     updateAppNational(processedData, Object.keys(processedData), chart);
 
     // Listen for updates.
-    $('.tagsinput-typeahead').change(function() {    
+    $('.tagsinput-typeahead').change(function () {
         updateAppNational(
             processedData,
             $('.tagsinput-typeahead').tagsinput('items'),
@@ -470,11 +470,11 @@ function updateAppCountry(data, countries, chart) {
         chartDatesP1.innerHTML = (
             "% change in job postings since "
             + shortDate(new Date(data[countries[0]][0].x))
-        ).split(" ").join("&nbsp;");    
+        ).split(" ").join("&nbsp;");
         chartDatesP2.innerHTML = (
             ", seasonally adjusted, to "
             + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x))
-        ).split(" ").join("&nbsp;"); 
+        ).split(" ").join("&nbsp;");
     };
 
     // Swap old with new datasets.
@@ -495,7 +495,7 @@ function updateAppCountry(data, countries, chart) {
 
         // Update colors.
         $(".tag")
-            .filter(function() { return this.innerText == countries[i]; })
+            .filter(function () { return this.innerText == countries[i]; })
             .css('background-color', settings["availableColors"][i][0]);
     };
     chart.update();
@@ -509,7 +509,7 @@ function initializeTabCountry(processedData, country) {
     chartTitle.innerText = "Total Job Postings on Indeed by Country";
     chartDatesP1.innerHTML = "";
 
-    $(".postingsTrendByMetro").css('display','block');
+    $(".postingsTrendByMetro").css('display', 'block');
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
     selectionsPrompt.innerText = "Select Australia, Canada, France, Germany, United Kingdom, and/or United States below:";
@@ -528,23 +528,23 @@ function initializeTabCountry(processedData, country) {
         typeahead: {
             source: Object.keys(processedData),
             limit: 3,
-            afterSelect: function() {
+            afterSelect: function () {
                 this.$element[0].value = '';
             }
         }
     });
 
     // Seed the options.
-    settings["defaults"]["country"].forEach((m,i) => {
+    settings["defaults"]["country"].forEach((m, i) => {
         $('.tagsinput-typeahead').tagsinput('add', m);
         $(".tag")
-            .filter(function() { return this.innerText == m; })
+            .filter(function () { return this.innerText == m; })
             .css('background-color', settings["availableColors"][i][0]);
     });
     updateAppCountry(processedData, settings["defaults"]["country"], chart);
 
     // Listen for updates.
-    $('.tagsinput-typeahead').change(function() {    
+    $('.tagsinput-typeahead').change(function () {
         updateAppCountry(
             processedData,
             $('.tagsinput-typeahead').tagsinput('items'),
@@ -569,7 +569,7 @@ function processData(metaData, region) {
                     var newDate = new Date("2020-02-01");
                     return row.x >= new Date(
                         newDate.getTime()
-                        + Math.abs(newDate.getTimezoneOffset()*60000)
+                        + Math.abs(newDate.getTimezoneOffset() * 60000)
                     )
                 })
             }
@@ -579,37 +579,37 @@ function processData(metaData, region) {
             for (var row of metaData[0].data) {
                 var tier = row["wage_terile"];
                 if (tier in processedData) {
-                    processedData[tier].push({ x: row.date, y: row[settings["yLabels"]["nation"]] }) 
+                    processedData[tier].push({ x: row.date, y: row[settings["yLabels"]["nation"]] })
                 } else {
                     processedData[tier] = [{ x: row.date, y: row[settings["yLabels"]["nation"]] }];
                 };
             };
             return processedData;
         case "state":
-            var processedData = metaData[0].data.reduce((a,c) => ({
+            var processedData = metaData[0].data.reduce((a, c) => ({
                 ...a,
                 [c['state'].toLowerCase()]: c['state'].toLowerCase() in a ?
-                    a[c['state'].toLowerCase()].concat({ x: c.date, y: c[settings["yLabels"]["state"]]}) :
-                    [{ x: c.date, y: c[settings["yLabels"]["state"]]}]
+                    a[c['state'].toLowerCase()].concat({ x: c.date, y: c[settings["yLabels"]["state"]] }) :
+                    [{ x: c.date, y: c[settings["yLabels"]["state"]] }]
             }), {});
             return processedData;
-        case "metro":            
+        case "metro":
             var processedData = {};
             for (var row of metaData[0].data) {
                 var cleanName = row["CBSA Title"].replace(", ", "--");
                 if (cleanName in processedData) {
-                    processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["metro"]] }) 
+                    processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["metro"]] })
                 } else {
                     processedData[cleanName] = [{ x: row.date, y: row[settings["yLabels"]["metro"]] }];
                 };
             };
             return processedData;
-        case "sector":            
+        case "sector":
             var processedData = {};
             for (var row of metaData[0].data) {
                 var cleanName = row["display_name"];
                 if (cleanName in processedData) {
-                    processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["sector"]] }) 
+                    processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["sector"]] })
                 } else {
                     processedData[cleanName] = [{ x: row.date, y: row[settings["yLabels"]["sector"]] }];
                 };
@@ -682,7 +682,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "Australia",
-                            filepath: "./AU/job_postings_by_sectorAU.csv",
+                            filepath: "./AU/job_postings_by_sector_AU.csv",
                             data: null
                         }
                     ]
@@ -690,7 +690,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "Canada",
-                            filepath: "./CA/job_postings_by_sectorCA.csv",
+                            filepath: "./CA/job_postings_by_sector_CA.csv",
                             data: null
                         }
                     ]
@@ -698,7 +698,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "France",
-                            filepath: "./FR/job_postings_by_sectorFR.csv",
+                            filepath: "./FR/job_postings_by_sector_FR.csv",
                             data: null
                         }
                     ]
@@ -706,7 +706,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "Germany",
-                            filepath: "./DE/job_postings_by_sectorDE.csv",
+                            filepath: "./DE/job_postings_by_sector_DE.csv",
                             data: null
                         }
                     ]
@@ -714,7 +714,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "United Kingdom",
-                            filepath: "./GB/job_postings_by_sectorGB.csv",
+                            filepath: "./GB/job_postings_by_sector_GB.csv",
                             data: null
                         }
                     ]
@@ -722,7 +722,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "United States",
-                            filepath: "./US/job_postings_by_sectorUS.csv",
+                            filepath: "./US/job_postings_by_sector_US.csv",
                             data: null
                         }
                     ]
@@ -730,7 +730,7 @@ function getDatasetsMeta(region, country) {
                     return [
                         {
                             name: "United States",
-                            filepath: "./US/job_postings_by_sectorUS.csv",
+                            filepath: "./US/job_postings_by_sector_US.csv",
                             data: null
                         }
                     ]
@@ -758,17 +758,17 @@ function loadapp(region, country) {
 
     // Read in all the required data.
     Promise.all(metaData.map(d => d3.csv(d.filepath)))
-        .catch(function(err) { return console.log(err); })
-        .then(function(files) {
+        .catch(function (err) { return console.log(err); })
+        .then(function (files) {
             console.log("All data loaded successfully.");
             for (var i = 0; i < files.length; i++) {
-                metaData[i].data = files[i].map(function(data) {
+                metaData[i].data = files[i].map(function (data) {
                     var newDate = new Date(data.date);
                     return {
                         ...data,
                         date: new Date(
                             newDate.getTime()
-                            + Math.abs(newDate.getTimezoneOffset()*60000)
+                            + Math.abs(newDate.getTimezoneOffset() * 60000)
                         )
                     };
                 });
@@ -777,7 +777,7 @@ function loadapp(region, country) {
             var processedData = processData(metaData, region);
 
             // Handle the data by chart type.
-            switch(region) {
+            switch (region) {
                 case "country":
                     initializeTabCountry(processedData, country);
                     break;
@@ -861,7 +861,7 @@ var settings = {
     ]
 };
 
-switch(country.toLowerCase()) {
+switch (country.toLowerCase()) {
     case "au":
         settings["defaults"]["country"] = [
             "Australia"
