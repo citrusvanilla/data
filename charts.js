@@ -114,7 +114,7 @@ function initChartSector(country) {
                 itemSort: (item1, item2) => { return item2.yLabel - item1.yLabel },
                 callbacks: {
                     title: function (tooltipItems) {
-                        return shortDate(new Date(tooltipItems[0].xLabel));
+                        return shortDate(new Date(tooltipItems[0].xLabel), country);
                     },
                     label: function (tooltipItem, data) {
                         var label = data.datasets[tooltipItem.datasetIndex].label;
