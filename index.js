@@ -1,6 +1,6 @@
 // Selections
 var availableJobSectorsURL = "https://raw.githubusercontent.com/citrusvanilla/data/visualization-data/available_job_sectors.txt";
-
+var availableJobSectorsFRURL = "https://raw.githubusercontent.com/citrusvanilla/data/visualization-data/available_job_sectors_FR.txt";
 var chartTitle = document.querySelector("#chart-title");
 var chartDatesP1 = document.querySelector("#chart-dates-p1");
 var chartDatesP2 = document.querySelector("#chart-dates-p2");
@@ -25,10 +25,11 @@ var translations = {
             }
         },
         "sector": {
-            "tab": "FR- Sectors",
-            "title": "FR - title",
-            "subtitle": "FR - subtitle",
-            "directive": "FR - directive",
+            "tab": "Métiers",
+            "title": "Offres d'emploi sur Indeed par famille de métiers",
+            "subtitleP1": "Variation au ",
+            "subtitleP2": " du volume d'offres d'emploi depuis le ",
+            "directive": function (x) { return `Trouver des <a href=${x} target="_blank">familles de métiers</a> dans le champ ci-dessous (limite 8):`; },
             "selections": {
                 "Accounting": "Comptabilité",
                 "Administrative Assistance": "Assistance Administrative",
@@ -195,17 +196,17 @@ function shortDate(date, country) {
     }
 }
 
-function subtitleP1(country) {
+function subtitleP1(country, region) {
     if (country.toLowerCase() === "fr") {
-        return translations.fr.country.subtitleP1;
+        return translations.fr[region].subtitleP1;
     } else {
         return "% change in job postings since ";
     }
 }
 
-function subtitleP2(country) {
+function subtitleP2(country, region) {
     if (country.toLowerCase() === "fr") {
-        return translations.fr.country.subtitleP2;
+        return translations.fr[region].subtitleP2;
     } else {
         return ", seasonally adjusted, to ";
     }
@@ -215,14 +216,14 @@ function updateAppSector(data, sectors, chart) {
     // Update dates.
     if (sectors.length) {
         chartDatesP1.innerHTML = (
-            "% change in job postings since "
-            + shortDate(new Date(data[sectors[0]][0].x))
-        ).split(" ").join("&nbsp;");
+            subtitleP1(country, "sector")
+            + shortDate(new Date(data[sectors[0]][0].x), country)
+        );
         chartDatesP2.innerHTML = (
-            ", seasonally adjusted, to "
-            + shortDate(new Date(data[sectors[0]][data[sectors[0]].length - 1].x))
-        ).split(" ").join("&nbsp;");
-    }
+            subtitleP2(country, "sector")
+            + shortDate(new Date(data[sectors[0]][data[sectors[0]].length - 1].x), country)
+        );
+    };
 
     // Swap old with new datasets.
     chart.data.labels.pop();
@@ -250,7 +251,7 @@ function updateAppSector(data, sectors, chart) {
 
 function initializeTabSector(processedData, country) {
     // Chart.
-    var chart = initChartSector();
+    var chart = initChartSector(country);
 
     // Style.
     if (country.toLowerCase() === "fr") {
@@ -266,7 +267,11 @@ function initializeTabSector(processedData, country) {
     selectionsContainer.style.display = "flex";
     selectionsPrompt.style.display = "block";
 
-    selectionsPrompt.innerHTML = `Search for <a href=${availableJobSectorsURL} target="_blank">available occupational sectors</a> in the box below (limit 8):`;
+    if (country.toLowerCase() === "fr") {
+        selectionsPrompt.innerHTML = translations.fr.sector.directive(availableJobSectorsFRURL);
+    } else {
+        selectionsPrompt.innerHTML = `Search for <a href=${availableJobSectorsURL} target="_blank">available occupational sectors</a> in the box below (limit 8):`;
+    }
 
     // Sets the options for the typeahead input.
     if (document.querySelector(".bootstrap-tagsinput")) {
@@ -589,11 +594,11 @@ function updateAppCountry(data, countries, chart, country) {
     // Update dates.
     if (countries.length) {
         chartDatesP1.innerHTML = (
-            subtitleP1(country)
+            subtitleP1(country, "country")
             + shortDate(new Date(data[countries[0]][0].x), country)
         );
         chartDatesP2.innerHTML = (
-            subtitleP2(country)
+            subtitleP2(country, "country")
             + shortDate(new Date(data[countries[0]][data[countries[0]].length - 1].x), country)
         );
     };
@@ -738,7 +743,7 @@ function processData(metaData, region, country) {
         case "sector":
             var processedData = {};
             for (var row of metaData[0].data) {
-                var cleanName = row["display_name"];
+                var cleanName = translateGeo(row["display_name"], region, country)
                 if (cleanName in processedData) {
                     processedData[cleanName].push({ x: row.date, y: row[settings["yLabels"]["sector"]] })
                 } else {
@@ -1010,6 +1015,10 @@ switch (country.toLowerCase()) {
     case "fr":
         settings["defaults"]["country"] = [
             "France"
+        ]
+        settings["defaults"]["sector"] = [
+            "Soins",
+            "Développement de logiciel"
         ]
         break;
     case "de":

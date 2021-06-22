@@ -54,7 +54,7 @@ function translateGridLine(value, country) {
 /**
  * SECTORS CHART
  */
-function initChartSector() {
+function initChartSector(country) {
     // Clear out existing chart.
     chartContainer.innerHTML = null;
     var canvas = document.createElement("canvas");
@@ -159,8 +159,11 @@ function initChartSector() {
                         autoSkip: false,
                         maxTicksLimit: 1000,
                         callback: function (value, index, values) {
-                            return ["1"].includes(value.split(" ")[1])
-                                ? value : undefined;
+                            if (country.toLowerCase() === "fr") {
+                                var translatedVal = translateGridLine(value, country);
+                                return ["1"].includes(value.split(" ")[1]) ? translatedVal : undefined;
+                            }
+                            return ["1"].includes(value.split(" ")[1]) ? value : undefined;
                         }
                     },
                     type: 'time',
@@ -697,7 +700,6 @@ function initChartCountry(country) {
                         autoSkip: false,
                         maxTicksLimit: 1000,
                         callback: function (value, index, values) {
-                            console.log(value);
                             if (country.toLowerCase() === "fr") {
                                 var translatedVal = translateGridLine(value, country);
                                 return ["1"].includes(value.split(" ")[1]) ? translatedVal : undefined;
